@@ -32,50 +32,24 @@ public class LockAliasProperties {
     @Data
     public class RedisProperties {
         // 单例地址
-        private String host = "localhost";
-        // 单例端口路
-        private Integer port = 6379;
+        private String address = "localhost:6379";
         // 密码
         private String password;
         // 数据库
         private Integer database = 0;
-
-        // 连接池最大连接数（使用负值表示没有限制）
-        private int maxTotal = 8;
-        // 连接池中的最大空闲连接
-        private int maxIdle = 8;
-        // 连接池中的最小空闲连接
-        private int minIdle = 0;
-        // 连接池最大阻塞等待时间(使用负值表示没有限制) 默认为-1
-        private Long maxWait = -1L;
-        //连接超时的时间
-        private Integer timeout = 2000;
-        //集群
-        private ClusterProperties cluster;
-        //哨兵
-        private SentinelProperties sentinel;
-
-        @Data
-        public class ClusterProperties {
-            // 集群节点，必输
-            private List<String> nodes;
-            // 出现异常最大重试次数
-            private Integer maxAttempts = 5;
-        }
-
-        @Data
-        public class SentinelProperties {
-            // 烧饼节点，必输
-            private List<String> nodes;
-            // 主节点名称，默认为空，必输
-            private String masterName;
-            // 用户，默认为空
-            private String user;
-        }
+        // 集群、哨兵节点
+        private List<String> nodes;
+        // 烧饼主节点名
+        private String masterName;
     }
 
     @Data
     public class Zookeeper {
-
+        // list of servers to connect to ip:port,ip:port...
+        private String connect;
+        // maxElapsedTimeMs 最大重试时间
+        private Integer maxElapsedTimeMs;
+        // sleepMsBetweenRetries 每次重试的间隔时间
+        private Integer sleepMsBetweenRetries;
     }
 }

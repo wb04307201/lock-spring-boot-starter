@@ -14,35 +14,15 @@ public class RedissionLock implements ILock {
     RedissonClient client;
 
     public RedissionLock(LockAliasProperties lockAliasProperties) {
-        this.client = client;
-    }
-
-    public void aaa() {
-        //创建配置
         Config config = new Config();
-        List<String> newNodeList = new ArrayList<>();
-        String[] nodeArray = nodes.split(",");
-
-        for (String oneNode : nodeArray) {
-            newNodeList.add("redis://" + oneNode);
+        if ("redis".equals(lockAliasProperties.getLocktype())) {
+            config.useSingleServer().setAddress(lockAliasProperties.getRedis().getAddress()).setPassword(lockAliasProperties.getRedis().getPassword()).setDatabase(lockAliasProperties.getRedis().getDatabase());
+        } else if ("redis-cluster".equals(lockAliasProperties.getLocktype())) {
+            config.useClusterServers().addNodeAddress(lockAliasProperties.getRedis().getNodes().toArray(new String[0])).setPassword(lockAliasProperties.getRedis().getPassword());
+        } else if ("redis-sentinel".equals(lockAliasProperties.getLocktype())) {
+            config.useSentinelServers().addSentinelAddress(lockAliasProperties.getRedis().getNodes().toArray(new String[0])).setPassword(lockAliasProperties.getRedis().getPassword()).setDatabase(lockAliasProperties.getRedis().getDatabase()).setMasterName(lockAliasProperties.getRedis().getMasterName());
         }
-
-        String[] addressArray = newNodeList.toArray(new String[newNodeList.size()]);
-
-        //集群模式,集群节点的地址须使用“redis://”前缀，否则将会报错。
-        //此例集群为3节点，各节点1主1从
-        config.useClusterServers().addNodeAddress(addressArray);
-        config.useClusterServers().setPassword(password);
-        config.useClusterServers().setTimeout(timeout);
-
-        config.useSingleServer().setAddress();
-        config.useSingleServer().setDatabase();
-        config.useSingleServer().setPassword();
-
-        config.useSentinelServers().setSentinelAddresses();
-
-        //创建客户端(发现这一非常耗时，基本在2秒-4秒左右)
-        RedissonClient redisson = Redisson.create(config);
+        this.client = Redisson.create(config);
     }
 
     @Override

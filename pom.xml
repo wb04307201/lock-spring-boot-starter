@@ -42,7 +42,7 @@
             <dependency>
                 <groupId>org.springframework.integration</groupId>
                 <artifactId>spring-integration-zookeeper</artifactId>
-                <version>5.5.0</version>
+                <version>6.1.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -70,4 +70,17 @@
             <artifactId>spring-integration-zookeeper</artifactId>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://maven.aliyun.com/repository/central</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
