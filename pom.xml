@@ -33,6 +33,17 @@
                 <artifactId>logback-classic</artifactId>
                 <version>1.4.4</version>
             </dependency>
+            <!-- Redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>3.23.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-zookeeper</artifactId>
+                <version>5.5.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -49,6 +60,14 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-zookeeper</artifactId>
         </dependency>
     </dependencies>
 </project>
