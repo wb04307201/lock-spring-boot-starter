@@ -6,9 +6,6 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RedissionLock implements ILock {
 
     RedissonClient client;

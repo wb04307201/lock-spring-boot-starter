@@ -39,6 +39,7 @@
                 <artifactId>redisson</artifactId>
                 <version>3.23.4</version>
             </dependency>
+            <!-- zookeeper -->
             <dependency>
                 <groupId>org.springframework.integration</groupId>
                 <artifactId>spring-integration-zookeeper</artifactId>
@@ -70,17 +71,4 @@
             <artifactId>spring-integration-zookeeper</artifactId>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://maven.aliyun.com/repository/central</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

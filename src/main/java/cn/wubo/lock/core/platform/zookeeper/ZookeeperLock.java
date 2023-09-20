@@ -1,6 +1,7 @@
 package cn.wubo.lock.core.platform.zookeeper;
 
 import cn.wubo.lock.core.ILock;
+import cn.wubo.lock.core.LockAliasProperties;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryUntilElapsed;
@@ -10,8 +11,8 @@ public class ZookeeperLock implements ILock {
 
     private ZookeeperLockRegistry zookeeperLockRegistry;
 
-    public ZookeeperLock(ZookeeperLockRegistry zookeeperLockRegistry) {
-        CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient("127.0.0.1:2181", new RetryUntilElapsed(1000, 4));
+    public ZookeeperLock(LockAliasProperties lockAliasProperties) {
+        CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(lockAliasProperties.getZookeeper().getConnect(), new RetryUntilElapsed(lockAliasProperties.getZookeeper().getMaxElapsedTimeMs(), lockAliasProperties.getZookeeper().getSleepMsBetweenRetries()));
         this.zookeeperLockRegistry = new ZookeeperLockRegistry(curatorFramework, "/locks");
     }
 

@@ -22,7 +22,7 @@ public class LockAliasProperties {
     private Zookeeper zookeeper = new Zookeeper();
 
     @Data
-    public class Database {
+    public static class Database {
         private String diverClassName;
         private String url;
         private String username;
@@ -30,7 +30,7 @@ public class LockAliasProperties {
     }
 
     @Data
-    public class RedisProperties {
+    public static class RedisProperties {
         // 单例地址
         private String address = "localhost:6379";
         // 密码
@@ -44,12 +44,14 @@ public class LockAliasProperties {
     }
 
     @Data
-    public class Zookeeper {
+    public static class Zookeeper {
         // list of servers to connect to ip:port,ip:port...
         private String connect;
         // maxElapsedTimeMs 最大重试时间
-        private Integer maxElapsedTimeMs;
+        private Integer maxElapsedTimeMs = 1000;
         // sleepMsBetweenRetries 每次重试的间隔时间
-        private Integer sleepMsBetweenRetries;
+        private Integer sleepMsBetweenRetries = 4;
+        // root 锁目录
+        private String root = "/locks";
     }
 }
