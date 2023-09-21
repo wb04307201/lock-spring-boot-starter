@@ -1,7 +1,6 @@
 package cn.wubo.lock.core;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
@@ -12,22 +11,12 @@ public class LockAliasProperties {
      */
     private String aliasName;
 
-    // database redis redis-cluster redis-sentinel zookeeper
+    // redis redis-cluster redis-sentinel zookeeper
     private String locktype;
-
-    private Database database = new Database();
 
     private RedisProperties redis = new RedisProperties();
 
     private Zookeeper zookeeper = new Zookeeper();
-
-    @Data
-    public static class Database {
-        private String diverClassName;
-        private String url;
-        private String username;
-        private String password;
-    }
 
     @Data
     public static class RedisProperties {

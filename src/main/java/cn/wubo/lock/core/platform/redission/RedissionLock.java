@@ -2,9 +2,12 @@ package cn.wubo.lock.core.platform.redission;
 
 import cn.wubo.lock.core.ILock;
 import cn.wubo.lock.core.LockAliasProperties;
+import cn.wubo.lock.exception.LockRuntimeException;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+
+import java.util.concurrent.TimeUnit;
 
 public class RedissionLock implements ILock {
 
@@ -25,6 +28,15 @@ public class RedissionLock implements ILock {
     @Override
     public Boolean tryLock(String key) {
         return client.getLock(key).tryLock();
+    }
+
+    @Override
+    public Boolean tryLock(String key, long time, TimeUnit unit) {
+        try {
+            return client.getLock(key).tryLock(time, unit);
+        } catch (InterruptedException e) {
+            throw new LockRuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
