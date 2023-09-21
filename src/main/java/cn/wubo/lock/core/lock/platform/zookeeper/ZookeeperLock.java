@@ -1,7 +1,7 @@
-package cn.wubo.lock.core.platform.zookeeper;
+package cn.wubo.lock.core.lock.platform.zookeeper;
 
-import cn.wubo.lock.core.ILock;
 import cn.wubo.lock.core.LockAliasProperties;
+import cn.wubo.lock.core.lock.ILock;
 import cn.wubo.lock.exception.LockRuntimeException;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -13,10 +13,17 @@ import java.util.concurrent.TimeUnit;
 public class ZookeeperLock implements ILock {
 
     private ZookeeperLockRegistry zookeeperLockRegistry;
+    private LockAliasProperties lockAliasProperties;
 
     public ZookeeperLock(LockAliasProperties lockAliasProperties) {
         CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(lockAliasProperties.getZookeeper().getConnect(), new RetryUntilElapsed(lockAliasProperties.getZookeeper().getMaxElapsedTimeMs(), lockAliasProperties.getZookeeper().getSleepMsBetweenRetries()));
         this.zookeeperLockRegistry = new ZookeeperLockRegistry(curatorFramework, "/locks");
+        this.lockAliasProperties = lockAliasProperties;
+    }
+
+    @Override
+    public Boolean support(String alias) {
+        return alias.equals(lockAliasProperties.getAlias());
     }
 
     @Override
@@ -25,7 +32,7 @@ public class ZookeeperLock implements ILock {
     }
 
     @Override
-    public Boolean tryLock(String key, long time, TimeUnit unit) {
+    public Boolean tryLock(String key, Long time, TimeUnit unit) {
         try {
             return zookeeperLockRegistry.obtain(key).tryLock(time, unit);
         } catch (InterruptedException e) {

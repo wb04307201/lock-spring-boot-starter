@@ -9,7 +9,7 @@ public class LockAliasProperties {
     /**
      * 别名
      */
-    private String aliasName;
+    private String alias;
 
     // redis redis-cluster redis-sentinel zookeeper
     private String locktype;
