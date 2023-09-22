@@ -10,5 +10,5 @@ import java.util.List;
 @Data
 @ConfigurationProperties(prefix = "lock")
 public class LockProperties {
-    List<LockAliasProperties> config = new ArrayList<>();
+    List<LockAliasProperties> props = new ArrayList<>();
 }

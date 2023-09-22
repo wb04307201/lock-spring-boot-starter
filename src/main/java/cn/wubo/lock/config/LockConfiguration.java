@@ -24,7 +24,7 @@ public class LockConfiguration {
 
     @Bean
     public List<ILock> locks(LockProperties lockProperties) {
-        return lockProperties.getConfig().stream().map(lockAliasProperties -> {
+        return lockProperties.getProps().stream().map(lockAliasProperties -> {
             if ("zookeeper".equals(lockAliasProperties.getLocktype())) return new ZookeeperLock(lockAliasProperties);
             else return new RedissionLock(lockAliasProperties);
         }).collect(Collectors.toList());
