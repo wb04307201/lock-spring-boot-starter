@@ -46,7 +46,6 @@ public class LockAnnotationAspect {
 
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        log.debug("LockAnnotationAspect 前置通知:" + joinPoint);
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
         log.debug("LockAnnotationAspect method{} alias:{} key:{} 尝试加锁", methodSignature.getMethod().getName(), locking.alias(), locking.keys());
