@@ -4,6 +4,7 @@ import cn.wubo.lock.core.aop.LockAnnotationAspect;
 import cn.wubo.lock.core.lock.ILock;
 import cn.wubo.lock.core.lock.platform.redission.RedissionLock;
 import cn.wubo.lock.core.lock.platform.zookeeper.ZookeeperLock;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,7 @@ public class LockConfiguration {
     }
 
     @Bean
-    public LockAnnotationAspect lockAspect(List<ILock> locks) {
-        return new LockAnnotationAspect(locks);
+    public LockAnnotationAspect lockAspect(List<ILock> locks, BeanFactory beanFactory) {
+        return new LockAnnotationAspect(locks, beanFactory);
     }
 }

@@ -8,11 +8,18 @@ import java.util.concurrent.TimeUnit;
 @Inherited
 @Documented
 public @interface Locking {
+    /**
+     * 配置的别名
+     */
     String alias();
 
-    String key();
+    /**
+     * support SPEL expresion
+     * 锁的key = alias + keys
+     */
+    String[] keys() default "";
 
-    long time();
+    long time() default -1;
 
-    TimeUnit unit();
+    TimeUnit unit() default TimeUnit.SECONDS;
 }
