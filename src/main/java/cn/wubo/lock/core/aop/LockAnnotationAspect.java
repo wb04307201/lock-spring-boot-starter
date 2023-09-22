@@ -49,10 +49,6 @@ public class LockAnnotationAspect {
         log.debug("LockAnnotationAspect 前置通知:" + joinPoint);
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
-
-        methodSignature.getMethod();
-        joinPoint.getArgs();
-
         ILock lock = getLock(locking.alias());
         String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
         Boolean tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
