@@ -49,11 +49,11 @@ public class LockAnnotationAspect {
         log.debug("LockAnnotationAspect 前置通知:" + joinPoint);
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
-        log.debug("LockAnnotationAspect method{} alias:{} key:{} 尝试加锁", methodSignature.getMethod(), locking.alias(), locking.keys());
+        log.debug("LockAnnotationAspect method{} alias:{} key:{} 尝试加锁", methodSignature.getMethod().getName(), locking.alias(), locking.keys());
         ILock lock = getLock(locking.alias());
         String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
         Boolean tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
-        log.debug("LockAnnotationAspect method{} alias:{} key:{} 加锁结果：{}", methodSignature.getMethod(), locking.alias(), locking.keys(), tryLock);
+        log.debug("LockAnnotationAspect method{} alias:{} key:{} 加锁结果：{}", methodSignature.getMethod().getName(), locking.alias(), locking.keys(), tryLock);
         if (Boolean.FALSE.equals(tryLock))
             throw new LockRuntimeException(String.format("alias:%s key:%s 已存在锁,不能执行！", locking.alias(), Arrays.toString(locking.keys())));
     }
@@ -62,7 +62,7 @@ public class LockAnnotationAspect {
     public void after(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
-        log.debug("LockAnnotationAspect method{} alias:{} key:{} 解锁", methodSignature.getMethod(), locking.alias(), locking.keys());
+        log.debug("LockAnnotationAspect method{} alias:{} key:{} 解锁", methodSignature.getMethod().getName(), locking.alias(), locking.keys());
         getLock(locking.alias()).unLock(getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs()));
     }
 
