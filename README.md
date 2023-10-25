@@ -171,6 +171,7 @@ public class DemoService {
 @Component
 public class Test3LockFail extends AbstractLockFail {
     public Test3LockFail() {
+        // 和锁配置中的别名一致
         super("test-3");
     }
 
