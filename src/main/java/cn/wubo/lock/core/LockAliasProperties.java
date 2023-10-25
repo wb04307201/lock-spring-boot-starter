@@ -11,12 +11,18 @@ public class LockAliasProperties {
      */
     private String alias;
 
-    // redis redis-cluster redis-sentinel zookeeper
+    // redis redis-cluster redis-sentinel zookeeper reentrantLock
     private String locktype;
 
     private RedisProperties redis = new RedisProperties();
 
     private Zookeeper zookeeper = new Zookeeper();
+
+    private Boolean enableLock = true;
+
+    private Integer retryCount = 0;
+
+    private Long waittime = 3 * 1000L;
 
     @Data
     public static class RedisProperties {

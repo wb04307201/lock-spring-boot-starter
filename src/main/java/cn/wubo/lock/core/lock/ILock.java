@@ -11,4 +11,8 @@ public interface ILock {
     Boolean tryLock(String key, Long time, TimeUnit unit);
 
     void unLock(String key);
+
+    Integer getRetryCount();
+
+    Long getWaittime();
 }
