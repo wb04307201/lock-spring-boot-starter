@@ -1,6 +1,7 @@
 package cn.wubo.lock.core.lock.platform.zookeeper;
 
 import cn.wubo.lock.core.LockAliasProperties;
+import cn.wubo.lock.core.fail.AbstractLockFail;
 import cn.wubo.lock.core.lock.platform.AbstractLock;
 import cn.wubo.lock.exception.LockRuntimeException;
 import org.apache.curator.framework.CuratorFramework;
@@ -14,8 +15,8 @@ public class ZookeeperLock extends AbstractLock {
 
     private ZookeeperLockRegistry zookeeperLockRegistry;
 
-    public ZookeeperLock(LockAliasProperties lockAliasProperties) {
-        super(lockAliasProperties);
+    public ZookeeperLock(LockAliasProperties lockAliasProperties, AbstractLockFail abstractLockFail) {
+        super(lockAliasProperties, abstractLockFail);
         CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(lockAliasProperties.getZookeeper().getConnect(), new RetryUntilElapsed(lockAliasProperties.getZookeeper().getMaxElapsedTimeMs(), lockAliasProperties.getZookeeper().getSleepMsBetweenRetries()));
         this.zookeeperLockRegistry = new ZookeeperLockRegistry(curatorFramework, "/locks");
     }

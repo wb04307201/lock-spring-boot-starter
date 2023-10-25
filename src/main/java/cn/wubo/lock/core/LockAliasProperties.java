@@ -22,10 +22,10 @@ public class LockAliasProperties {
 
     private Integer retryCount = 0;
 
-    private Long waittime = 3 * 1000L;
+    private Long waitTime = 3 * 1000L;
 
     @Data
-    public static class RedisProperties {
+    public class RedisProperties {
         // 单例地址
         private String address = "localhost:6379";
         // 密码
@@ -39,7 +39,7 @@ public class LockAliasProperties {
     }
 
     @Data
-    public static class Zookeeper {
+    public class Zookeeper {
         // list of servers to connect to ip:port,ip:port...
         private String connect;
         // maxElapsedTimeMs 最大重试时间

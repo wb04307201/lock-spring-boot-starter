@@ -58,7 +58,7 @@ lock:
       # 加锁失败重试次数，默认0不重试，-1一直重试
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
-      waittime: 3000
+      waitTime: 3000
       redis:
         address: redis://ip:port
         password: mypassword
@@ -73,7 +73,7 @@ lock:
       # 加锁失败重试次数，默认0不重试，-1一直重试
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
-      waittime: 3000
+      waitTime: 3000
       redis:
         password: mypassword
         # 集群节点
@@ -90,7 +90,7 @@ lock:
       # 加锁失败重试次数，默认0不重试，-1一直重试
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
-      waittime: 3000
+      waitTime: 3000
       redis:
         password: mypassword
         # 数据库，默认0
@@ -111,7 +111,7 @@ lock:
       # 加锁失败重试次数，默认0不重试，-1一直重试
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
-      waittime: 3000
+      waitTime: 3000
       zookeeper:
         # zookeeper服务地址
         connect: ip:port,ip:port...
@@ -130,7 +130,7 @@ lock:
       # 加锁失败重试次数，默认0不重试，-1一直重试
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
-      waittime: 3000
+      waitTime: 3000
 
 # debug日志
 logging:
@@ -147,10 +147,13 @@ logging:
 public class DemoService {
 
     @Locking(alias = "test-1", keys = "#key")
-    public String doWork(String key) {
+    public String doWork1(String key) {
         try {
-            Thread.currentThread().wait(new Random(30).nextLong() * 1000);
+            Double time = (Math.random() * 30 + 1) * 1000;
+            log.info(Thread.currentThread().getId() + " " + time);
+            Thread.currentThread().wait(time.longValue());
         } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
         return key;
@@ -160,6 +163,23 @@ public class DemoService {
 
 > keys支持SpEL表达式，#匹配参数，@匹配上下文
 > 如果需要设置超时时间，请配置Locking注解time和unit属性
+
+
+## 其他1：获取锁失败处理
+```java
+@Slf4j
+@Component
+public class Test3LockFail extends AbstractLockFail {
+    public Test3LockFail() {
+        super("test-3");
+    }
+
+    @Override
+    public void fail(Object... args) {
+        log.info(Thread.currentThread().getId() + " 失败了！ 参数--》{}",Arrays.toString(args));
+    }
+}
+```
 
 
 ## 待办

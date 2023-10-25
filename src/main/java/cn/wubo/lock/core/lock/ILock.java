@@ -1,5 +1,7 @@
 package cn.wubo.lock.core.lock;
 
+import cn.wubo.lock.core.fail.AbstractLockFail;
+
 import java.util.concurrent.TimeUnit;
 
 public interface ILock {
@@ -14,5 +16,7 @@ public interface ILock {
 
     Integer getRetryCount();
 
-    Long getWaittime();
+    Long getWaitTime();
+
+    AbstractLockFail getLockFail();
 }

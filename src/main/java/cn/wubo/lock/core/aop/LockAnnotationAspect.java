@@ -1,6 +1,7 @@
 package cn.wubo.lock.core.aop;
 
 
+import cn.wubo.lock.core.fail.AbstractLockFail;
 import cn.wubo.lock.core.lock.ILock;
 import cn.wubo.lock.exception.LockRuntimeException;
 import lombok.extern.slf4j.Slf4j;
@@ -46,32 +47,10 @@ public class LockAnnotationAspect {
 
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        Long threadId = Thread.currentThread().getId();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
-        String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
         ILock lock = getLock(locking.alias());
-        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 尝试加锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
-        Boolean tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
-        if (Boolean.FALSE.equals(tryLock)) {
-            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
-            int count = 0;
-            while (Boolean.FALSE.equals(tryLock) && ((lock.getRetryCount() > 0 && count <= lock.getRetryCount()) || lock.getRetryCount() < 0)) {
-                count++;
-                try {
-                    Thread.sleep(lock.getWaittime());
-                } catch (InterruptedException e) {
-                    log.error(e.getMessage(), e);
-                    Thread.currentThread().interrupt();
-                }
-                log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败 第{}次重试", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey, count);
-                tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
-            }
-            if (Boolean.FALSE.equals(tryLock))
-                throw new LockRuntimeException(String.format("alias:%s key:%s 已存在锁,不能执行！", locking.alias(), newKey));
-        }
-
-        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 成功", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+        if (lock != null) tryLock(locking, lock, methodSignature, joinPoint.getTarget(), joinPoint.getArgs());
     }
 
     @After("pointCut()")
@@ -79,9 +58,12 @@ public class LockAnnotationAspect {
         Long threadId = Thread.currentThread().getId();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Locking locking = getLocking(methodSignature);
-        String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
-        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 解锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
-        getLock(locking.alias()).unLock(newKey);
+        ILock lock = getLock(locking.alias());
+        if (lock != null) {
+            String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
+            lock.unLock(newKey);
+            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 解锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+        }
     }
 
     private Locking getLocking(MethodSignature methodSignature) {
@@ -91,7 +73,7 @@ public class LockAnnotationAspect {
     }
 
     private ILock getLock(String alias) {
-        return locks.stream().filter(lock -> lock.support(alias)).findAny().orElseThrow(() -> new LockRuntimeException("未定义的的缓存别名!"));
+        return locks.stream().filter(lock -> lock.support(alias)).findAny().orElse(null);
     }
 
     private String getNewKey(String alias, String[] keys, Object rootObject, Method method, Object[] args) {
@@ -102,6 +84,37 @@ public class LockAnnotationAspect {
         StandardEvaluationContext context = new MethodBasedEvaluationContext(rootObject, method, args, NAME_DISCOVERER);
         context.setBeanResolver(beanResolver);
         return Arrays.stream(keys).map(key -> PARSER.parseExpression(key).getValue(context, String.class)).collect(Collectors.joining(":"));
+    }
+
+    private void tryLock(Locking locking, ILock lock, MethodSignature methodSignature, Object target, Object[] args) {
+        Long threadId = Thread.currentThread().getId();
+        String newKey = getNewKey(locking.alias(), locking.keys(), target, methodSignature.getMethod(), args);
+        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 尝试加锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+        Boolean tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
+        if (Boolean.FALSE.equals(tryLock)) {
+            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+            int count = 0;
+            while (Boolean.FALSE.equals(tryLock) && ((lock.getRetryCount() > 0 && count <= lock.getRetryCount()) || lock.getRetryCount() < 0)) {
+                count++;
+                try {
+                    Thread.sleep(lock.getWaitTime());
+                } catch (InterruptedException e) {
+                    throw new LockRuntimeException(e.getMessage(), e);
+                }
+                log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败 第{}次重试", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey, count);
+                tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
+            }
+            if (Boolean.FALSE.equals(tryLock)) fail(locking, lock, newKey, args);
+        }
+
+        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+    }
+
+    private void fail(Locking locking, ILock lock, String newKey, Object[] args) {
+        AbstractLockFail lockFail = lock.getLockFail();
+        if (lockFail != null) lockFail.fail(args);
+        else
+            throw new LockRuntimeException(String.format("alias:%s key:%s 已存在锁,不能执行！", locking.alias(), newKey));
     }
 
 }
