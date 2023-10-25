@@ -26,7 +26,7 @@
 <dependency>
     <groupId>com.gitee.wb04307201</groupId>
     <artifactId>lock-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -44,7 +44,7 @@ public class LockDemoApplication {
 }
 ```
 
-## 第四步 `application.yml`配置文件中添加以下相关配置，可以配置多个缓存然后形成多级缓存使用
+## 第四步 `application.yml`配置文件中添加相关配置
 
 ```yaml
 lock:
@@ -53,8 +53,14 @@ lock:
     - alias: redis-1
       # 单例redis
       locktype: redis
+      # 启用锁，默认true
+      enableLock: true
+      # 加锁失败重试次数，默认0不重试，-1一直重试
+      retryCount: 0
+      # 重试等待时间，默认3000，单位毫秒
+      waittime: 3000
       redis:
-        address: redis://127.0.0.1:6379
+        address: redis://ip:port
         password: mypassword
         # 数据库，默认是0
         database: 0
@@ -62,28 +68,69 @@ lock:
     - alias: redis-2
       # 单例redis集群
       locktype: redis-cluster
+      # 启用锁，默认true
+      enableLock: true
+      # 加锁失败重试次数，默认0不重试，-1一直重试
+      retryCount: 0
+      # 重试等待时间，默认3000，单位毫秒
+      waittime: 3000
       redis:
         password: mypassword
         # 集群节点
-        nodes: 
-          - redis://127.0.0.1:6379
-          - redis://127.0.0.1:6379
-          - redis://127.0.0.1:6379
+        nodes:
+          - redis://ip:port
+          - redis://ip:port
+          - redis://ip:port
       # 别名
     - alias: redis-3
       # 单例redis哨兵
       locktype: redis-sentinel
+      # 启用锁，默认true
+      enableLock: true
+      # 加锁失败重试次数，默认0不重试，-1一直重试
+      retryCount: 0
+      # 重试等待时间，默认3000，单位毫秒
+      waittime: 3000
       redis:
         password: mypassword
-        # 数据库，默认是0
+        # 数据库，默认0
         database: 0
         # 集群节点
         nodes:
-          - redis://127.0.0.1:6379
-          - redis://127.0.0.1:6379
-          - redis://127.0.0.1:6379
+          - redis://ip:port
+          - redis://ip:port
+          - redis://ip:port
         # 主服务名
         masterName: masterName
+      # 别名
+    - alias: zookeeper-1
+      # zookeeper
+      locktype: zookeeper
+      # 启用锁，默认true
+      enableLock: true
+      # 加锁失败重试次数，默认0不重试，-1一直重试
+      retryCount: 0
+      # 重试等待时间，默认3000，单位毫秒
+      waittime: 3000
+      zookeeper:
+        # zookeeper服务地址
+        connect: ip:port,ip:port...
+        # 最大重试时间，默认值1000
+        maxElapsedTimeMs: 1000
+        # 每次重试的间隔时间，默认值4
+        sleepMsBetweenRetries: 4
+        # 锁目录
+        root: /locks
+      # 别名
+    - alias: reentrantLock-1
+      # ReentrantLock,可重入锁，只在服务内部加锁
+      locktype: reentrantLock
+      # 启用锁，默认true
+      enableLock: true
+      # 加锁失败重试次数，默认0不重试，-1一直重试
+      retryCount: 0
+      # 重试等待时间，默认3000，单位毫秒
+      waittime: 3000
 
 # debug日志
 logging:
@@ -93,7 +140,7 @@ logging:
         lock: debug
 ```
 
-## 第五步 通过注解使用缓存
+## 第五步 通过注解使用锁
 
 ```java
 @Component
