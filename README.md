@@ -182,6 +182,75 @@ public class Test3LockFail extends AbstractLockFail {
 }
 ```
 
+下面是重试3次，重试等待3秒，加锁失败调用方法的运行日志
+```bash
+2023-10-26 09:19:16.581 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-4] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:58 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [nPool-worker-11] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:57 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-8] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:62 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [nPool-worker-10] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:64 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [onPool-worker-6] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:61 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.581 DEBUG 108896 --- [nPool-worker-15] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:60 methoddoWork3 alias:test-3 key:test-3:test_key_001 尝试加锁
+2023-10-26 09:19:16.586 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.585 DEBUG 108896 --- [onPool-worker-4] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:58 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [nPool-worker-11] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:57 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [onPool-worker-8] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:62 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [nPool-worker-15] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:60 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.585 DEBUG 108896 --- [onPool-worker-6] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:61 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:16.586 DEBUG 108896 --- [nPool-worker-10] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:64 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.586 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败
+2023-10-26 09:19:16.594  INFO 108896 --- [onPool-worker-6] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：61 time:5972.057289984968
+2023-10-26 09:19:16.595 DEBUG 108896 --- [onPool-worker-6] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:61 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+2023-10-26 09:19:19.588 DEBUG 108896 --- [nPool-worker-11] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:57 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [nPool-worker-15] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:60 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [onPool-worker-4] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:58 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [onPool-worker-8] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:62 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [nPool-worker-10] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:64 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.588 DEBUG 108896 --- [nPool-worker-11] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:57 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:19.588 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第1次重试
+2023-10-26 09:19:19.589  INFO 108896 --- [nPool-worker-11] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：57 time:2308.4955182796143
+2023-10-26 09:19:19.589 DEBUG 108896 --- [nPool-worker-11] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:57 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+2023-10-26 09:19:22.588 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588 DEBUG 108896 --- [nPool-worker-15] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:60 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:22.588 DEBUG 108896 --- [onPool-worker-8] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:62 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588 DEBUG 108896 --- [nPool-worker-10] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:64 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588 DEBUG 108896 --- [onPool-worker-4] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:58 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.588  INFO 108896 --- [nPool-worker-13] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：59 time:7854.4647680142525
+2023-10-26 09:19:22.589 DEBUG 108896 --- [nPool-worker-13] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:59 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+2023-10-26 09:19:22.604 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.604 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第2次重试
+2023-10-26 09:19:22.604 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:22.604  INFO 108896 --- [onPool-worker-1] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：63 time:12838.747332898187
+2023-10-26 09:19:22.604 DEBUG 108896 --- [onPool-worker-1] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:63 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+2023-10-26 09:19:25.601 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.601 DEBUG 108896 --- [nPool-worker-15] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:60 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.601 DEBUG 108896 --- [onPool-worker-4] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:58 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.601 DEBUG 108896 --- [nPool-worker-10] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:64 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.601 DEBUG 108896 --- [onPool-worker-8] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:62 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.601 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:25.601  INFO 108896 --- [onPool-worker-9] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：55 time:25678.06024063111
+2023-10-26 09:19:25.601  INFO 108896 --- [nPool-worker-15] cn.wubo.lock.Test3LockFail               : Test3LockFail fail thread：60 args:[test_key_001]
+2023-10-26 09:19:25.601  INFO 108896 --- [onPool-worker-4] cn.wubo.lock.Test3LockFail               : Test3LockFail fail thread：58 args:[test_key_001]
+2023-10-26 09:19:25.601  INFO 108896 --- [nPool-worker-10] cn.wubo.lock.Test3LockFail               : Test3LockFail fail thread：64 args:[test_key_001]
+2023-10-26 09:19:25.601  INFO 108896 --- [onPool-worker-8] cn.wubo.lock.Test3LockFail               : Test3LockFail fail thread：62 args:[test_key_001]
+2023-10-26 09:19:25.602 DEBUG 108896 --- [onPool-worker-9] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:55 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁失败 第3次重试
+2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
+2023-10-26 09:19:25.617  INFO 108896 --- [onPool-worker-2] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：56 time:15733.156151486939
+2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
+
+```
+
 
 ## 待办
 
