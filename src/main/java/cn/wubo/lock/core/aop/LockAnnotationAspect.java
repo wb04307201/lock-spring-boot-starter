@@ -94,7 +94,7 @@ public class LockAnnotationAspect {
         if (Boolean.FALSE.equals(tryLock)) {
             log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
             int count = 0;
-            while (Boolean.FALSE.equals(tryLock) && ((lock.getRetryCount() > 0 && count <= lock.getRetryCount()) || lock.getRetryCount() < 0)) {
+            while (Boolean.FALSE.equals(tryLock) && ((lock.getRetryCount() > 0 && count < lock.getRetryCount()) || lock.getRetryCount() < 0)) {
                 count++;
                 try {
                     Thread.sleep(lock.getWaitTime());
