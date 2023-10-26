@@ -113,8 +113,7 @@ public class LockAnnotationAspect {
     private void fail(Locking locking, ILock lock, String newKey, Object[] args) {
         AbstractLockFail lockFail = lock.getLockFail();
         if (lockFail != null) lockFail.fail(args);
-        else
-            throw new LockRuntimeException(String.format("alias:%s key:%s 已存在锁,不能执行！", locking.alias(), newKey));
+        throw new LockRuntimeException(String.format("alias:%s key:%s 已存在锁,不能执行！", locking.alias(), newKey));
     }
 
 }
