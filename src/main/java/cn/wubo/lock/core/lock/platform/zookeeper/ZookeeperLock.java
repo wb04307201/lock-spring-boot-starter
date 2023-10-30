@@ -18,6 +18,7 @@ public class ZookeeperLock extends AbstractLock {
     public ZookeeperLock(LockAliasProperties lockAliasProperties, AbstractLockFail abstractLockFail) {
         super(lockAliasProperties, abstractLockFail);
         CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(lockAliasProperties.getZookeeper().getConnect(), new RetryUntilElapsed(lockAliasProperties.getZookeeper().getMaxElapsedTimeMs(), lockAliasProperties.getZookeeper().getSleepMsBetweenRetries()));
+        curatorFramework.start();
         this.zookeeperLockRegistry = new ZookeeperLockRegistry(curatorFramework, "/locks");
     }
 

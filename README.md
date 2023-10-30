@@ -26,7 +26,7 @@
 <dependency>
     <groupId>com.gitee.wb04307201</groupId>
     <artifactId>lock-spring-boot-starter</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -248,7 +248,6 @@ public class Test3LockFail extends AbstractLockFail {
 2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 加锁
 2023-10-26 09:19:25.617  INFO 108896 --- [onPool-worker-2] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：56 time:15733.156151486939
 2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
-
 ```
 
 
