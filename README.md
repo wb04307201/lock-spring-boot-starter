@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/com.gitee.wb04307201/lock-spring-boot-starter.svg)](https://jitpack.io/#com.gitee.wb04307201/lock-spring-boot-starter)
 
 > 这是一个锁适配器  
-> 可配置多个redis锁和zookeeper,服务ReentrantLock内锁  
+> 可配置多个redis锁和zookeeper,服务内ReentrantLock锁  
 > 通过注解@Locking对方法加锁  
 > 可配置锁失效时间,加锁失败回调bean方法  
 > 注解支持根据SpEL表达式获取加锁key
