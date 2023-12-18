@@ -20,6 +20,13 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties({LockProperties.class})
 public class LockConfiguration {
 
+    /**
+     * 根据LockProperties和lockFails创建锁列表
+     *
+     * @param lockProperties LockProperties对象
+     * @param lockFails      lockFails列表
+     * @return 锁列表
+     */
     @Bean
     public List<ILock> locks(LockProperties lockProperties, List<AbstractLockFail> lockFails) {
         return lockProperties.getProps().stream().filter(LockAliasProperties::getEnableLock).map(lockAliasProperties -> {
@@ -33,12 +40,29 @@ public class LockConfiguration {
         }).collect(Collectors.toList());
     }
 
+
+    /**
+     * 根据给定的锁故障列表和锁别名属性，获取匹配的锁故障对象。
+     *
+     * @param lockFails           锁故障列表
+     * @param lockAliasProperties 锁别名属性
+     * @return 匹配的锁故障对象，如果没有匹配的锁故障，则返回null
+     */
     private AbstractLockFail getLockFail(List<AbstractLockFail> lockFails, LockAliasProperties lockAliasProperties) {
         return lockFails.stream().filter(lockFail -> lockFail.support(lockAliasProperties.getAlias())).findAny().orElse(null);
     }
 
+
+    /**
+     * 创建LockAnnotationAspect的Bean
+     *
+     * @param locks       锁集合
+     * @param beanFactory Bean工厂
+     * @return LockAnnotationAspect的Bean实例
+     */
     @Bean
     public LockAnnotationAspect lockAspect(List<ILock> locks, BeanFactory beanFactory) {
         return new LockAnnotationAspect(locks, beanFactory);
     }
+
 }

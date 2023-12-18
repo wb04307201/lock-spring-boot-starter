@@ -14,15 +14,33 @@ public abstract class AbstractLock implements ILock {
         this.abstractLockFail = abstractLockFail;
     }
 
+    /**
+     * 获取重试次数
+     *
+     * @return 重试次数
+     */
     public Integer getRetryCount() {
         return lockAliasProperties.getRetryCount();
     }
 
+
+    /**
+     * 获取等待时间
+     *
+     * @return 返回等待时间
+     */
     public Long getWaitTime() {
         return lockAliasProperties.getWaitTime();
     }
 
+
+    /**
+     * 获取失败时的锁对象
+     *
+     * @return 失败时的锁对象
+     */
     public AbstractLockFail getLockFail() {
         return abstractLockFail;
     }
+
 }
