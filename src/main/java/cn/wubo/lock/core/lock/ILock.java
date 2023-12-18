@@ -33,9 +33,24 @@ public interface ILock {
      */
     void unLock(String key);
 
+    /**
+     * 获取重试次数
+     *
+     * @return 重试次数
+     */
     Integer getRetryCount();
 
+    /**
+     * 获取等待时间
+     *
+     * @return 返回等待时间
+     */
     Long getWaitTime();
 
+    /**
+     * 获取失败时的锁对象
+     *
+     * @return 失败时的锁对象
+     */
     AbstractLockFail getLockFail();
 }
