@@ -1,6 +1,8 @@
 # lock-spring-boot-starter
 
-[![](https://jitpack.io/v/com.gitee.wb04307201/lock-spring-boot-starter.svg)](https://jitpack.io/#com.gitee.wb04307201/lock-spring-boot-starter)
+[![](https://jitpack.io/v/com.gitee.wb04307201/lock-spring-boot-starter.svg)](https://jitpack.io/#com.gitee.wb04307201/lock-spring-boot-starter)  
+![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-17+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-3+-green.svg)  
+![ReentrantLock](https://img.shields.io/badge/Srping%20ReentrantLock-green.svg) ![Redis](https://img.shields.io/badge/Srping%20Redis-green.svg) ![Zookeeper](https://img.shields.io/badge/Srping%20Zookeeper-green.svg)
 
 > 这是一个锁适配器  
 > 可配置多个redis锁和zookeeper,服务内ReentrantLock锁  
@@ -8,10 +10,18 @@
 > 可配置锁失效时间,加锁失败回调bean方法  
 > 注解支持根据SpEL表达式获取加锁key
 
+## 支持的锁类型
+- ReentrantLock
+- Redis
+- Zookeeper
+
+## 适合的场景
+- 需要切换消息中间件时，可以做到无缝切换，不需要修改业务代码；
+
 ## [代码示例](https://gitee.com/wb04307201/lock-demo)
 
-## 第一步 增加 JitPack 仓库
-
+## 快速开始
+### 引入依赖
 ```xml
 <repositories>
     <repository>
@@ -21,8 +31,6 @@
 </repositories>
 ```
 
-## 第二步 引入jar
-
 ```xml
 <dependency>
     <groupId>com.gitee.wb04307201</groupId>
@@ -31,8 +39,7 @@
 </dependency>
 ```
 
-## 第三步 在启动类上加上`@EnableLock`注解
-
+### 在启动类上加上`@EnableLock`注解
 ```java
 @EnableLock
 @SpringBootApplication
@@ -45,8 +52,7 @@ public class LockDemoApplication {
 }
 ```
 
-## 第四步 `application.yml`配置文件中添加相关配置
-
+### `application.yml`配置文件中添加相关配置
 ```yaml
 lock:
   props:
@@ -141,8 +147,7 @@ logging:
         lock: debug
 ```
 
-## 第五步 通过注解使用锁
-
+### 通过注解使用锁
 ```java
 @Component
 public class DemoService {
@@ -165,8 +170,8 @@ public class DemoService {
 > keys支持SpEL表达式，#匹配参数，@匹配上下文
 > 如果需要设置超时时间，请配置Locking注解time和unit属性
 
-
-## 其他1：获取锁失败处理
+## 高级
+## 如何在加锁失败后进行异常处理
 ```java
 @Slf4j
 @Component
@@ -250,8 +255,3 @@ public class Test3LockFail extends AbstractLockFail {
 2023-10-26 09:19:25.617  INFO 108896 --- [onPool-worker-2] cn.wubo.lock.DemoService                 : DemoService doWork3 thread：56 time:15733.156151486939
 2023-10-26 09:19:25.617 DEBUG 108896 --- [onPool-worker-2] c.w.lock.core.aop.LockAnnotationAspect   : LockAnnotationAspect thread:56 methoddoWork3 alias:test-3 key:test-3:test_key_001 解锁
 ```
-
-
-## 待办
-
-- [ ] *增加使用数据库加锁*
