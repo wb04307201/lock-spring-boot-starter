@@ -1,8 +1,7 @@
 # lock-spring-boot-starter
 
 [![](https://jitpack.io/v/com.gitee.wb04307201/lock-spring-boot-starter.svg)](https://jitpack.io/#com.gitee.wb04307201/lock-spring-boot-starter)  
-![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-8+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-2+-green.svg)  
-![ReentrantLock](https://img.shields.io/badge/Srping%20ReentrantLock-green.svg) ![Redis](https://img.shields.io/badge/Srping%20Redis-green.svg) ![Zookeeper](https://img.shields.io/badge/Srping%20Zookeeper-green.svg)
+![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-8+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-2+-green.svg)
 
 > 这是一个锁适配器  
 > 可配置多个redis锁和zookeeper,服务内ReentrantLock锁  
