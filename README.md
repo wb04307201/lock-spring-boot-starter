@@ -171,7 +171,7 @@ public class DemoService {
 > 如果需要设置超时时间，请配置Locking注解time和unit属性
 
 ## 高级
-## 如何在加锁失败后进行异常处理
+### 如何在加锁失败后进行异常处理
 ```java
 @Slf4j
 @Component
