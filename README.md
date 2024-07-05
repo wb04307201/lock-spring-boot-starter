@@ -22,6 +22,7 @@
 
 ## 快速开始
 ### 引入依赖
+增加 JitPack 仓库
 ```xml
 <repositories>
     <repository>
