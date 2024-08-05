@@ -7,11 +7,7 @@
 [![fork](https://img.shields.io/github/forks/wb04307201/lock-spring-boot-starter)](https://github.com/wb04307201/lock-spring-boot-starter)  
 ![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-8+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-2+-green.svg)
 
-> 这是一个锁适配器  
-> 可配置多个redis锁和zookeeper,服务内ReentrantLock锁  
-> 通过注解@Locking对方法加锁  
-> 可配置锁失效时间,加锁失败回调bean方法  
-> 注解支持根据SpEL表达式获取加锁key
+> 这是一个锁适配器，可配置多个redis锁和zookeeper，服务内ReentrantLock锁，通过@Locking注解对方法加锁，可配置锁失效时间,加锁失败回调bean方法，注解支持根据SpEL表达式进行加锁key
 
 ## 支持的锁类型
 - ReentrantLock
