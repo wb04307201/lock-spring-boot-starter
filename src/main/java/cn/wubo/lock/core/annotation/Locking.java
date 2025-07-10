@@ -1,4 +1,4 @@
-package cn.wubo.lock.core.aop;
+package cn.wubo.lock.core.annotation;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
