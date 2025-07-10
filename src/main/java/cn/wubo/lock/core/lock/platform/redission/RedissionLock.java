@@ -1,7 +1,6 @@
 package cn.wubo.lock.core.lock.platform.redission;
 
 import cn.wubo.lock.core.LockAliasProperties;
-import cn.wubo.lock.core.fail.AbstractLockFail;
 import cn.wubo.lock.core.lock.platform.AbstractLock;
 import cn.wubo.lock.exception.LockRuntimeException;
 import org.redisson.Redisson;
@@ -14,8 +13,8 @@ public class RedissionLock extends AbstractLock {
 
     private RedissonClient client;
 
-    public RedissionLock(LockAliasProperties lockAliasProperties, AbstractLockFail abstractLockFail) {
-        super(lockAliasProperties, abstractLockFail);
+    public RedissionLock(LockAliasProperties lockAliasProperties) {
+        super(lockAliasProperties);
         Config config = new Config();
         if ("redis".equals(lockAliasProperties.getLocktype())) {
             config.useSingleServer().setAddress(lockAliasProperties.getRedis().getAddress()).setPassword(lockAliasProperties.getRedis().getPassword()).setDatabase(lockAliasProperties.getRedis().getDatabase());

@@ -1,7 +1,6 @@
 package cn.wubo.lock.core.lock.platform.reentrant;
 
 import cn.wubo.lock.core.LockAliasProperties;
-import cn.wubo.lock.core.fail.AbstractLockFail;
 import cn.wubo.lock.core.lock.platform.AbstractLock;
 import cn.wubo.lock.exception.LockRuntimeException;
 import lombok.Data;
@@ -14,8 +13,8 @@ public class ReentrantLock extends AbstractLock {
 
     private LockClient client;
 
-    public ReentrantLock(LockAliasProperties lockAliasProperties, AbstractLockFail abstractLockFail) {
-        super(lockAliasProperties, abstractLockFail);
+    public ReentrantLock(LockAliasProperties lockAliasProperties) {
+        super(lockAliasProperties);
         this.client = new LockClient();
     }
 

@@ -1,7 +1,5 @@
 package cn.wubo.lock.core.lock;
 
-import cn.wubo.lock.core.fail.AbstractLockFail;
-
 import java.util.concurrent.TimeUnit;
 
 public interface ILock {
@@ -46,11 +44,4 @@ public interface ILock {
      * @return 返回等待时间
      */
     Long getWaitTime();
-
-    /**
-     * 获取失败时的锁对象
-     *
-     * @return 失败时的锁对象
-     */
-    AbstractLockFail getLockFail();
 }
