@@ -104,7 +104,7 @@ public class LockAnnotationAspect {
      */
     private String getNewKey(String alias, String[] keys, Object rootObject, Method method, Object[] args) {
         String temp = getSpelDefinitionKey(keys, rootObject, method, args);
-        return "".equals(temp) ? alias : alias.concat(":").concat(temp);
+        return "".equals(temp) ? alias.concat(":").concat(method.toGenericString()) : alias.concat(":").concat(method.toGenericString()).concat(":").concat(temp);
     }
 
 

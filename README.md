@@ -30,7 +30,7 @@
 <dependency>
     <groupId>com.gitee.wb04307201</groupId>
     <artifactId>lock-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
