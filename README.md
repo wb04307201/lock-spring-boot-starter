@@ -47,7 +47,7 @@ public class LockDemoApplication {
 }
 ```
 
-## 第四步 zai`application.yml`配置文件中按需添加相关配置
+## 第四步 在`application.yml`配置文件中按需添加相关配置
 ```yaml
 lock:
   props:
