@@ -133,13 +133,6 @@ lock:
       retryCount: 0
       # 重试等待时间，默认3000，单位毫秒
       waitTime: 3000
-
-# debug日志
-logging:
-  level:
-    cn:
-      wubo:
-        lock: debug
 ```
 
 ## 第五步 通过注解使用锁
@@ -164,8 +157,7 @@ public class DemoService {
 > keys支持SpEL表达式，#匹配参数，@匹配上下文
 > 如果需要设置超时时间，请配置Locking注解time和unit属性
 
-
-## 可通过配置日志及级别增加输出
+## 可通过配置日志及级别增加锁相关debug日志输出
 ```yaml
 logging:
   level:
