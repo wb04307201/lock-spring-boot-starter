@@ -8,7 +8,7 @@
 ![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-17+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-3+-green.svg)
 
 > 一个注解@Locking搞定锁
-> 通过或配置可切换布式redis锁、zookeeper锁，以及单节点ReentrantLock锁
+> 通过或配置可切换分布式redis锁、zookeeper锁，以及单节点ReentrantLock锁
 > 注解@Locking支持根据SpEL表达式对加锁的维度进一步细化
 
 ## 代码示例
