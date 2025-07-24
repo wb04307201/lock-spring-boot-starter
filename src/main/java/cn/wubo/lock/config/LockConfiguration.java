@@ -37,7 +37,7 @@ public class LockConfiguration {
             throw new IllegalArgumentException("LockProperties or its props list is null.");
         }
 
-        // 锁类型映射表
+        // 锁类型映射表，便于扩展
         Map<String, Function<LockAliasProperties, ILock>> lockFactoryMap = new HashMap<>();
         lockFactoryMap.put("zookeeper", ZookeeperLock::new);
         lockFactoryMap.put("reentrantLock", ReentrantLock::new);
@@ -50,15 +50,13 @@ public class LockConfiguration {
                 .filter(Objects::nonNull)
                 .filter(LockAliasProperties::getEnableLock)
                 .map(lockAliasProperties -> {
-                    String type = lockAliasProperties.getLocktype();
-                    if (type == null) {
-                        throw new LockRuntimeException("Lock type is null for lock config: " + lockAliasProperties);
+                    String lockType = lockAliasProperties.getLocktype();
+                    Function<LockAliasProperties, ILock> constructor = lockFactoryMap.get(lockType);
+                    if (constructor != null) {
+                        return constructor.apply(lockAliasProperties);
+                    } else {
+                        throw new LockRuntimeException("Unsupported lock type: " + lockType);
                     }
-                    Function<LockAliasProperties, ILock> constructor = lockFactoryMap.get(type.toLowerCase());
-                    if (constructor == null) {
-                        throw new LockRuntimeException("Unsupported lock type: " + type);
-                    }
-                    return constructor.apply(lockAliasProperties);
                 })
                 .collect(Collectors.toList());
         // @formatter:on
