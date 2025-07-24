@@ -32,13 +32,15 @@ public class ZookeeperLock extends AbstractLock {
     }
 
     @Override
-    public Boolean tryLock(String key, Long time, TimeUnit unit) {
-        try {
-            return zookeeperLockRegistry.obtain(key).tryLock(time, unit);
-        } catch (InterruptedException e) {
-            throw new LockRuntimeException(e.getMessage(), e);
-        }
+public Boolean tryLock(String key, Long time, TimeUnit unit) {
+    try {
+        return zookeeperLockRegistry.obtain(key).tryLock(time, unit);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new LockRuntimeException(e);
     }
+}
+
 
     @Override
     public void unLock(String key) {
