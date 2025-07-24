@@ -30,8 +30,14 @@ public class ReentrantLock extends AbstractLock {
 
     @Override
     public Boolean tryLock(String key, Long time, TimeUnit unit) {
-        return client.tryLock(key, time, unit);
+        try {
+            return client.tryLock(key, time, unit);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 恢复中断状态
+            throw new LockRuntimeException(e);
+        }
     }
+
 
     @Override
     public void unLock(String key) {
@@ -52,12 +58,8 @@ public class ReentrantLock extends AbstractLock {
             return getLock(key).tryLock();
         }
 
-        public Boolean tryLock(String key, Long time, TimeUnit unit) {
-            try {
-                return getLock(key).tryLock(time, unit);
-            } catch (InterruptedException e) {
-                throw new LockRuntimeException(e.getMessage(), e);
-            }
+        public Boolean tryLock(String key, Long time, TimeUnit unit) throws InterruptedException {
+            return getLock(key).tryLock(time, unit);
         }
 
         public void unLock(String key) {

@@ -41,9 +41,11 @@ public class RedissionLock extends AbstractLock {
         try {
             return client.getLock(key).tryLock(time, unit);
         } catch (InterruptedException e) {
-            throw new LockRuntimeException(e.getMessage(), e);
+            Thread.currentThread().interrupt();
+            throw new LockRuntimeException(e);
         }
     }
+
 
     @Override
     public void unLock(String key) {

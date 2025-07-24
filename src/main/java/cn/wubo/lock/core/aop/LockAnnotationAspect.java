@@ -43,42 +43,64 @@ public class LockAnnotationAspect {
 
 
     /**
-     * 在执行带有@Locking注解的方法之前，执行此方法以获取锁
-     *
-     * @param joinPoint 切入点，提供了关于目标方法的信息
-     * @param locking   锁定注解，包含锁的配置信息
-     */
-    @Before("@annotation(locking)")
-    public void before(JoinPoint joinPoint, Locking locking) {
+ * 在执行带有@Locking注解的方法之前，执行此方法以获取锁
+ *
+ * @param joinPoint 切入点，提供了关于目标方法的信息
+ * @param locking   锁定注解，包含锁的配置信息
+ */
+@Before("@annotation(locking)")
+public void before(JoinPoint joinPoint, Locking locking) {
+    // 参数校验
+    if (joinPoint == null) {
+        throw new LockRuntimeException("切入点(joinPoint)不能为空！");
+    }
+    if (locking == null) {
+        throw new LockRuntimeException("锁定注解(locking)不能为空！");
+    }
+
+    try {
         // 获取方法签名
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         // 根据Locking对象的别名获取锁对象
         ILock lock = getLock(locking.alias());
         // 如果锁对象不为空，则尝试执行锁定逻辑
-        if (lock == null) throw new LockRuntimeException(String.format("锁别名%s不存在！", locking.alias()));
-        else tryLock(locking, lock, methodSignature, joinPoint.getTarget(), joinPoint.getArgs());
+        if (lock == null) {
+            throw new LockRuntimeException(String.format("锁别名%s不存在！", locking.alias()));
+        } else {
+            tryLock(locking, lock, methodSignature, joinPoint.getTarget(), joinPoint.getArgs());
+        }
+    } catch (Exception e) {
+        throw new LockRuntimeException(e);
     }
+}
+
 
 
     // 在带有@Locking注解的方法执行后执行的方法
     @After("@annotation(locking)")
     public void after(JoinPoint joinPoint, Locking locking) {
-        // 获取当前线程id
-        Long threadId = Thread.currentThread().getId();
         // 获取方法签名
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         // 根据Locking对象的别名获取锁对象
         ILock lock = getLock(locking.alias());
         // 如果锁对象不为空，则解锁
         if (lock != null) {
-            // 获取解锁的新key
-            String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
-            // 解锁
-            lock.unLock(newKey);
-            // 打印日志
-            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 解锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+            try {
+                // 获取当前线程id
+                Long threadId = Thread.currentThread().getId();
+                // 获取解锁的新key
+                String newKey = getNewKey(locking.alias(), locking.keys(), joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs());
+                // 解锁
+                lock.unLock(newKey);
+                // 打印日志
+                log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 解锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+            } catch (Exception e) {
+                // 记录解锁过程中的异常，避免影响主流程
+                log.warn("LockAnnotationAspect 解锁过程中发生异常 alias:{} method:{}", locking.alias(), methodSignature.getMethod().getName(), e);
+            }
         }
     }
+
 
 
     /**
@@ -88,7 +110,10 @@ public class LockAnnotationAspect {
      * @return 锁对象，如果别名不存在则返回null
      */
     private ILock getLock(String alias) {
-        return locks.stream().filter(lock -> lock.support(alias)).findAny().orElse(null);
+        if (alias == null) {
+            return null;
+        }
+        return locks.stream().filter(lock -> lock.support(alias)).findFirst().orElse(null);
     }
 
 
@@ -103,8 +128,18 @@ public class LockAnnotationAspect {
      * @return 生成的新键
      */
     private String getNewKey(String alias, String[] keys, Object rootObject, Method method, Object[] args) {
+        if (alias == null) {
+            alias = "";
+        }
+
         String temp = getSpelDefinitionKey(keys, rootObject, method, args);
-        return "".equals(temp) ? alias.concat(":").concat(method.toGenericString()) : alias.concat(":").concat(method.toGenericString()).concat(":").concat(temp);
+        String prefix = alias + ":" + method.toGenericString();
+
+        if ("".equals(temp)) {
+            return prefix;
+        } else {
+            return prefix + ":" + temp;
+        }
     }
 
 
@@ -118,12 +153,29 @@ public class LockAnnotationAspect {
      * @return SPEL定义的键，通过解析给定的键数组中的SPEL表达式并合并结果得到的键值字符串
      */
     private String getSpelDefinitionKey(String[] keys, Object rootObject, Method method, Object[] args) {
-        // 创建一个基于方法的评估上下文，用于SPEL表达式的解析
+        if (keys == null || keys.length == 0) {
+            return "";
+        }
+        if (method == null || args == null) {
+            throw new IllegalArgumentException("method and args must not be null");
+        }
+
         StandardEvaluationContext context = new MethodBasedEvaluationContext(rootObject, method, args, NAME_DISCOVERER);
-        // 设置豆解析器，以便在表达式中解析豆
         context.setBeanResolver(beanResolver);
-        // 遍历键数组，解析每个键中的SPEL表达式，并将结果合并为单个字符串返回
-        return Arrays.stream(keys).map(key -> PARSER.parseExpression(key).getValue(context, String.class)).filter(Objects::nonNull).collect(Collectors.joining(":"));
+
+        return Arrays.stream(keys)
+                .filter(Objects::nonNull)
+                .map(key -> {
+                    try {
+                        return PARSER.parseExpression(key).getValue(context, String.class);
+                    } catch (Exception e) {
+                        // 可选：添加日志记录
+                        // log.warn("Failed to parse expression: {}", key, e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(":"));
     }
 
 
@@ -137,12 +189,16 @@ public class LockAnnotationAspect {
      * @param args            方法参数数组，用于日志记录和生成锁的键
      */
     private void tryLock(Locking locking, ILock lock, MethodSignature methodSignature, Object target, Object[] args) {
+        if (lock == null) {
+            throw new IllegalArgumentException("Lock object cannot be null");
+        }
+
         // 获取当前线程ID，用于日志记录
         Long threadId = Thread.currentThread().getId();
         // 生成新的锁键
         String newKey = getNewKey(locking.alias(), locking.keys(), target, methodSignature.getMethod(), args);
         // 记录尝试加锁的日志
-        log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 尝试加锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+        log.debug("LockAnnotationAspect thread:{} method {} alias:{} key:{} 尝试加锁", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
 
         // 尝试获取锁，根据配置的超时时间决定是否使用带超时的尝试方法
         Boolean tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
@@ -150,17 +206,28 @@ public class LockAnnotationAspect {
         // 如果获取锁失败，并且配置了重试次数，则进行重试
         if (Boolean.FALSE.equals(tryLock)) {
             int count = 0;
-            while (Boolean.FALSE.equals(tryLock) && ((lock.getRetryCount() > 0 && count < lock.getRetryCount()) || lock.getRetryCount() < 0)) {
+            long waitTime = lock.getWaitTime();
+            int retryCount = lock.getRetryCount();
+
+            while (Boolean.FALSE.equals(tryLock)
+                    && ((retryCount > 0 && count < retryCount) || retryCount < 0)) {
+
                 count++;
                 try {
                     // 等待一段时间后重试
-                    Thread.sleep(lock.getWaitTime());
+                    if (waitTime > 0) {
+                        Thread.sleep(waitTime);
+                    } else {
+                        // 防止忙等
+                        Thread.yield();
+                    }
                 } catch (InterruptedException e) {
-                    // 如果线程被中断，抛出自定义异常
-                    throw new LockRuntimeException(e.getMessage(), e);
+                    // 恢复中断状态并抛出自定义异常
+                    Thread.currentThread().interrupt();
+                    throw new LockRuntimeException(e);
                 }
                 // 记录重试日志
-                log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败 第{}次重试", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey, count);
+                log.debug("LockAnnotationAspect thread:{} method {} alias:{} key:{} 加锁失败 第{}次重试", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey, count);
                 // 重试获取锁
                 tryLock = locking.time() > 0 ? lock.tryLock(newKey, locking.time(), locking.unit()) : lock.tryLock(newKey);
             }
@@ -168,9 +235,9 @@ public class LockAnnotationAspect {
 
         // 根据最终是否获取到锁，记录相应的日志
         if (Boolean.FALSE.equals(tryLock))
-            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁失败", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+            log.debug("LockAnnotationAspect thread:{} method {} alias:{} key:{} 加锁失败", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
         else
-            log.debug("LockAnnotationAspect thread:{} method{} alias:{} key:{} 加锁成功", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
+            log.debug("LockAnnotationAspect thread:{} method {} alias:{} key:{} 加锁成功", threadId, methodSignature.getMethod().getName(), locking.alias(), newKey);
     }
 
 

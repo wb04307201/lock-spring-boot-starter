@@ -6,7 +6,7 @@ public class LockRuntimeException extends RuntimeException {
         super(message);
     }
 
-    public LockRuntimeException(String message, Throwable cause) {
-        super(message, cause);
+    public LockRuntimeException(Throwable cause) {
+        super(cause);
     }
 }
